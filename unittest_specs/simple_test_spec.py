@@ -67,7 +67,7 @@ class Asserter(unittest.TestCase):
         
         :param expected_length: the expected value of len(actual_value)
         """
-        self.assertEqual(expected_length, len(self._actual_value))
+        self.assertEqual(len(self._actual_value), expected_length)
 
 
 def parameterized(params):
