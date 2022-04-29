@@ -13,16 +13,16 @@ class Asserter(unittest.TestCase):
         self._actual_value = actual_value
 
     def to_be(self, expected_value):
-        self.assertEqual(expected_value, self._actual_value)
+        self.assertEqual(self._actual_value, expected_value)
 
     def to_not_be(self, expected_value):
-        self.assertNotEqual(expected_value, self._actual_value)
+        self.assertNotEqual(self._actual_value, expected_value)
 
     def to_be_of_type(self, expected_type):
         self.assertIsInstance(self._actual_value, expected_type)
 
     def to_equal_list(self, expected_list):
-        self.assertListEqual(expected_list, self._actual_value)
+        self.assertListEqual(self._actual_value, expected_list)
 
     def to_contain(self, expected_element):
         self.assertTrue(expected_element in self._actual_value)
