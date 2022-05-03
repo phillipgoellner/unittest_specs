@@ -1,6 +1,6 @@
 import unittest
 
-from .simple_test_spec import parameterized, intercept, SimpleFlatSpec
+from unittest_specs.simple_test_spec import parameterized, intercept, SimpleFlatSpec
 
 
 def get_empty_test_case():
@@ -10,7 +10,7 @@ def get_empty_test_case():
     return type('', (unittest.TestCase,), {'subTest': __})
 
 
-class TestDSL(unittest.TestCase):
+class SimpleTestDSL(unittest.TestCase):
 
     def test_param_decorator_should_execute_without_error(self):
         @parameterized(params=[])
@@ -51,7 +51,7 @@ class TestDSL(unittest.TestCase):
         SimpleFlatSpec().expect(given_input).to_contain_all(expected_elements)
 
 
-class AsserterTest(unittest.TestCase):
+class SimpleAsserterTest(unittest.TestCase):
     def setUp(self) -> None:
         self.test_case = SimpleFlatSpec()
 
@@ -113,4 +113,3 @@ class AsserterTest(unittest.TestCase):
             raise Exception()
 
         exception_raiser()
-
