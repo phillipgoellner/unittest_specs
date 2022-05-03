@@ -1,14 +1,21 @@
 import unittest
+from typing import Any
 
 
 class SimpleFlatSpec(unittest.TestCase):
     @staticmethod
-    def expect(actual_value):
+    def expect(actual_value: Any):
+        """
+        Set up an 'actual' value to be compared against an expectation/assertion.
+
+        :param actual_value: the value computed by the SUT to be compared against an expectation
+        :return: an Asserter to perform an assertion on
+        """
         return Asserter(actual_value)
 
 
 class Asserter(unittest.TestCase):
-    def __init__(self, actual_value):
+    def __init__(self, actual_value: Any):
         super().__init__()
         self._actual_value = actual_value
 
