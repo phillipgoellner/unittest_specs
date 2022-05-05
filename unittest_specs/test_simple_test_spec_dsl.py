@@ -1,6 +1,9 @@
 import unittest
 
-from unittest_specs.simple_test_spec import parameterized, intercept, SimpleFlatSpec
+from unittest_specs.simple_test_spec import SimpleFlatSpec
+
+parameterize = SimpleFlatSpec.parameterize
+intercept = SimpleFlatSpec.intercept
 
 
 def get_empty_test_case():
@@ -13,13 +16,13 @@ def get_empty_test_case():
 class SimpleTestDSL(unittest.TestCase):
 
     def test_param_decorator_should_execute_without_error(self):
-        @parameterized(params=[])
+        @parameterize(params=[])
         def empty_function(_):
             return 1
 
         empty_function(get_empty_test_case())
 
-    @parameterized(params=[
+    @parameterize(params=[
         (1, 1),
         (2, 2),
     ])
@@ -33,7 +36,7 @@ class SimpleTestDSL(unittest.TestCase):
 
         SimpleFlatSpec().expect(exception_raiser).to_raise(Exception, 1, another_arg=32)
 
-    @parameterized(params=[
+    @parameterize(params=[
         ([1, 2, 3], 3),
         ('abcde', 'd'),
         ({0: 1}, 0),
@@ -42,7 +45,7 @@ class SimpleTestDSL(unittest.TestCase):
     def test_should_detect_contained_correctly(self, given_input, expected_element):
         SimpleFlatSpec().expect(given_input).to_contain(expected_element)
 
-    @parameterized(params=[
+    @parameterize(params=[
         ([1, 2, 3], [1, 3]),
         ({0: 1}, [0]),
         ((0, 1, 2, 3), [1, 3, 0]),

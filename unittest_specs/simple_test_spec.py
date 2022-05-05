@@ -13,6 +13,50 @@ class SimpleFlatSpec(unittest.TestCase):
         """
         return Asserter(actual_value)
 
+    @staticmethod
+    def parameterize(params):
+        """
+        Injects provided test data sets into the decorated function with every data set being provided as a set of
+        parameters. For each set, a separate sub-test is performed using unittest's subTest.
+
+        :param params: a list of tuples containing the test data
+        """
+
+        def decorator_function(function):
+            def parameter_handler(self):
+                for param in params:
+                    if isinstance(param, tuple):
+                        test_params = [_p for _p in param]
+                    else:
+                        test_params = [param]
+
+                    with self.subTest(i=test_params[0]):
+                        function(self, *test_params)
+
+            return parameter_handler
+
+        return decorator_function
+
+    @staticmethod
+    def intercept(expected_exception):
+        """
+        Intercepts an expected Exception object occurring the decorated test function. If no Exception
+        of the specified type is raised, the test fails.
+
+        :param expected_exception: the Exception type that is expected to occur
+        """
+
+        def decorator_function(function):
+            def nested_execution_handler(self, *args, **kwargs):
+                interceptor = unittest.TestCase()
+
+                with interceptor.assertRaises(expected_exception=expected_exception):
+                    function(self, *args, **kwargs)
+
+            return nested_execution_handler
+
+        return decorator_function
+
 
 class Asserter(unittest.TestCase):
     def __init__(self, actual_value: Any):
@@ -75,47 +119,3 @@ class Asserter(unittest.TestCase):
         :param expected_length: the expected value of len(actual_value)
         """
         self.assertEqual(len(self._actual_value), expected_length)
-
-
-def parameterized(params):
-    """
-    Injects provided test data sets into the decorated function with every data set being provided as a set of
-    parameters. For each set, a separate sub-test is performed using unittest's subTest.
-
-    :param params: a list of tuples containing the test data
-    """
-
-    def decorator_function(function):
-        def parameter_handler(self):
-            for param in params:
-                if isinstance(param, tuple):
-                    test_params = [_p for _p in param]
-                else:
-                    test_params = [param]
-
-                with self.subTest(i=test_params[0]):
-                    function(self, *test_params)
-
-        return parameter_handler
-
-    return decorator_function
-
-
-def intercept(expected_exception):
-    """
-    Intercepts an expected Exception object occurring the decorated test function. If no Exception
-    of the specified type is raised, the test fails.
-
-    :param expected_exception: the Exception type that is expected to occur
-    """
-
-    def decorator_function(function):
-        def nested_execution_handler(self, *args, **kwargs):
-            interceptor = unittest.TestCase()
-
-            with interceptor.assertRaises(expected_exception=expected_exception):
-                function(self, *args, **kwargs)
-
-        return nested_execution_handler
-
-    return decorator_function
