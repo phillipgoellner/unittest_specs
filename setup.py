@@ -12,11 +12,15 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/phillipgoellner/unittest_specs",
+    project_urls={
+        "Source (GitHub)": "https://github.com/phillipgoellner/unittest_specs",
+        "Source (GitLab)": "https://gitlab.com/goellnerphillip/unittest_specs"
+    },
     author=unittest_specs.__author__,
-    license="GPL-3.0 License",
+    license="BSD Three-Clause License",
     packages=["unittest_specs"],
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Programming Language :: Python :: 3",
     ]
