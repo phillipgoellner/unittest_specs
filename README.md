@@ -1,5 +1,9 @@
 # unittest_specs
 
+## Table of content
+* [FunSpec](#FunSpec)
+* [SimpleFlatSpec](#SimpleFlatSpec)
+
 ## FunSpec
 
 This style can be used to write highly readable test cases helpful for good documentation in code. 
@@ -100,6 +104,10 @@ Therefore, the recommended usage is to utilize `expect()` and its assertions to 
 
 ## SimpleFlatSpec
 
+The simple flat spec style is visually very close to plain `unittest.TestCase` code and can, in fact be used
+as a drop-in replacement. Its main advantage is a set of more readable assertions, as well as some utility
+decorators.
+
 ### Usage
 
 The `SimpleFlatSpec` class provides an easy and readable way to write tests. Much like in 
@@ -150,12 +158,12 @@ function, with the first element in each being used as the label.
 A parameterized test might look like the following:
 
 ```python
-from unittest_specs import SimpleFlatSpec, parameterized
+from unittest_specs import SimpleFlatSpec
 
 
 class MyTest(SimpleFlatSpec):
     
-    @parameterized(params=[
+    @SimpleFlatSpec.parameterize(params=[
         ('hello',  5),
         ('world!', 6),
     ])
