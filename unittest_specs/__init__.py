@@ -4,7 +4,7 @@ unittest-specs
 A simple wrapper around the unittest package with different styles for specs
 """
 
-__version__ = "1.1.0"
+__version__ = "1.1.0a0"
 __author__ = "Phillip Goellner"
 
 

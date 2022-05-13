@@ -96,6 +96,7 @@ Setting up test cases is pretty straight forward:
 ```python
 from unittest_specs import describe, it, expect
 
+
 describe("Python numbers",
          
          it("5 should be of type int",
@@ -125,6 +126,7 @@ separate test function. Keep in mind that each `it()` should have a description 
 
 ```python
 from unittest_specs import describe, it, expect
+
 
 describe("Python arithmatic",
          
@@ -158,6 +160,45 @@ class PythonArithmatic(unittest.TestCase):
         
     def test_should_subtract_correctly(self):
         self.assertEqual(1340 - 3, 1337)
+```
+
+### Intercepting Exceptions
+
+When a function is supposed to raise an exception under a certain circumstance, this can also be tested by specifying
+the intercept option of an `it()` block.
+
+```python
+from unittest_specs import describe, it
+
+
+def dangerous_function():
+    raise Exception()
+
+
+describe("Python arithmatic",
+         
+         it("should intercept an exception", dangerous_function, intercept=Exception)
+         
+         )
+```
+
+This requires a function reference to be passed to `it()`, since an interception requires to be set up before
+the actual execution. If the function you want to test requires parameters to reach an error state, this can easily
+set up by passing a parameter-less lambda:
+
+```python
+from unittest_specs import describe, it
+
+
+def divide(divisor, dividend):
+    return divisor / dividend
+
+
+describe("Python arithmatic",
+         
+         it("dividing by zero should throw an error", lambda: divide(42, 0), intercept=ZeroDivisionError)
+         
+         )
 ```
 
 ### Limitations
