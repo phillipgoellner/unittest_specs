@@ -201,6 +201,26 @@ describe("Python arithmatic",
          )
 ```
 
+### Available Assertions
+
+| Assertion Function  | Description                                                          | Equivalent unittest function                         |
+|---------------------|----------------------------------------------------------------------|------------------------------------------------------|
+| `to_be()`           | checks for equality between actual and expected value                | `assertEqual()`                                      |
+| `to_not_be()`       | checks for inequality between actual and expected value              | `assertNotEqual()`                                   |
+| `to_be_of_type()`   | checks whether the actual value is of a specified type               | `assertIsInstance()`                                 |
+| `to_equal_list()`   | checks an actual and expected list for equality                      | `assertListEqual()`                                  |
+| `to_contain()`      | checks whether the actual collection contains an expected value      | `assertTrue(expected_element in self._actual_value)` |
+| `to_contain_all()`  | checks whether the actual collection contains all expected values    | custom implementation                                |
+| `to_be_true()`      | checks whether the actual value is of value `True`                   | `assertTrue()`                                       |
+| `to_be_false()`     | checks whether the actual value is of value `False`                  | `assertFalse()`                                      |
+| `to_be_none()`      | checks whether the actual value is `None`                            | `assertIsNone()`                                     |
+| `to_not_be_none()`  | checks whether the actual value is not `None`                        | `assertIsNotNone()`                                  |
+| `to_be_a_list()`    | checks whether the actual value is of type `list`                    | `assertIsInstance(actual_value, list)`               |
+| `to_be_a_dict()`    | checks whether the actual value is of type `dict`                    | `assertIsInstance(actual_value, dict)`               |
+| `to_be_a_set()`     | checks whether the actual value is of type `set`                     | `assertIsInstance(actual_value, set)`                |
+| `to_be_of_length()` | checks for an expected length of an object supporting len()          | `assertEqual(len(actual_value), expected_value)`     |
+
+
 ### Limitations
 
 **Descriptions and Identifiers**
