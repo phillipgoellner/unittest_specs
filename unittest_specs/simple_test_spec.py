@@ -40,7 +40,7 @@ class SimpleFlatSpec(unittest.TestCase):
     @staticmethod
     def intercept(expected_exception):
         """
-        Intercepts an expected Exception object occurring the decorated test function. If no Exception
+        Intercepts an expected Exception object occurring in the decorated test function. If no Exception
         of the specified type is raised, the test fails.
 
         :param expected_exception: the Exception type that is expected to occur
