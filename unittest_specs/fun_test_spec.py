@@ -52,7 +52,7 @@ def expect(actual_value):
 
         def to_be_of_type(self, expected_type) -> Callable:
             def run_test(_):
-                self.assertIsInstance(expected_type, _get_actual_value())
+                self.assertIsInstance(_get_actual_value(), expected_type)
 
             return run_test
 
