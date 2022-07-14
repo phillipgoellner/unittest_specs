@@ -5,7 +5,7 @@ from typing import Callable, Tuple
 
 def describe(description: str, *test_config) -> None:
     """
-    Constructs a ... containing zero or more test cases.
+    Constructs a collection containing zero or more test cases.
 
     :param description:
     :param test_config:
@@ -33,6 +33,18 @@ def it(description: str, test_def: Callable) -> Tuple[str, Callable]:
 
 
 def expect(actual_value):
+    """
+    Sets up the first part of an assertion line with the actual value. This statement should be followed by a
+    statement specifying the actual assertion, e.g.
+
+    ``expect("Nice String").to_be_of_type(str)``
+
+    The actual value can be either a computed value (determined at call time) or a function of style ``() -> Any``
+    called during the execution of the assertion.
+
+    :param actual_value: value to be compared against an expectation
+    :return: an Asserter object offering different assertions
+    """
     def _get_actual_value():
         return actual_value() if hasattr(actual_value, '__call__') else actual_value
 
