@@ -33,34 +33,38 @@ def it(description: str, test_def: Callable) -> Tuple[str, Callable]:
 
 
 def expect(actual_value):
+    def _get_actual_value():
+        return actual_value() if hasattr(actual_value, '__call__') else actual_value
+
     class Asserter(unittest.TestCase):
+
         def to_be(self, expected_value) -> Callable:
             def run_test(_):
-                self.assertEqual(actual_value, expected_value)
+                self.assertEqual(expected_value, _get_actual_value())
 
             return run_test
 
         def to_not_be(self, expected_value) -> Callable:
             def run_test(_):
-                self.assertNotEqual(actual_value, expected_value)
+                self.assertNotEqual(expected_value, _get_actual_value())
 
             return run_test
 
         def to_be_of_type(self, expected_type) -> Callable:
             def run_test(_):
-                self.assertIsInstance(actual_value, expected_type)
+                self.assertIsInstance(expected_type, _get_actual_value())
 
             return run_test
 
         def to_equal_list(self, expected_list) -> Callable:
             def run_test(_):
-                self.assertListEqual(actual_value, expected_list)
+                self.assertListEqual(expected_list, _get_actual_value())
 
             return run_test
 
         def to_contain(self, expected_element) -> Callable:
             def run_test(_):
-                self.assertTrue(expected_element in actual_value)
+                self.assertTrue(expected_element in _get_actual_value())
 
             return run_test
 
@@ -68,7 +72,7 @@ def expect(actual_value):
             def run_test(_):
                 is_contained = True
                 for element in expected_elements:
-                    if element not in actual_value:
+                    if element not in _get_actual_value():
                         is_contained = False
                         break
                 self.assertTrue(is_contained)
@@ -76,25 +80,25 @@ def expect(actual_value):
 
         def to_be_true(self) -> Callable:
             def run_test(_):
-                self.assertTrue(actual_value)
+                self.assertTrue(_get_actual_value())
 
             return run_test
 
         def to_be_false(self) -> Callable:
             def run_test(_):
-                self.assertFalse(actual_value)
+                self.assertFalse(_get_actual_value())
 
             return run_test
 
         def to_be_none(self) -> Callable:
             def run_test(_):
-                self.assertIsNone(actual_value)
+                self.assertIsNone(_get_actual_value())
 
             return run_test
 
         def to_not_be_none(self) -> Callable:
             def run_test(_):
-                self.assertIsNotNone(actual_value)
+                self.assertIsNotNone(_get_actual_value())
 
             return run_test
 
@@ -109,7 +113,7 @@ def expect(actual_value):
 
         def to_be_of_length(self, expected_length: int) -> Callable:
             def run_test(_):
-                self.assertEqual(len(actual_value), expected_length)
+                self.assertEqual(expected_length, len(_get_actual_value()))
 
             return run_test
 
