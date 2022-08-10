@@ -3,6 +3,7 @@
 ## Table of content
 * [FunSpec](#FunSpec)
 * [SimpleFlatSpec](#SimpleFlatSpec)
+* [WithSpec](#WithSpec)
 
 ## FunSpec
 
@@ -169,4 +170,74 @@ class MyTest(SimpleFlatSpec):
     ])
     def test_should_check_string_length(self, given_string, expected_length):
         self.expect(given_string).to_be_of_length(expected_length)
+```
+
+## WithSpec
+
+The `WithSpec` provides a structure to set up multi-step test scenarios optionally including setup and/or teardown.
+
+### Usage
+
+Similar to [FunSpec](#FunSpec) `WithSpec` also utilizes a strongly modified DSL to construct test cases. They, too,
+are dynamically converted into valid `unittest` test cases and executed by the  auto-discovery
+(`python3 -m unittest <directory>`). A `WithSpec` test scenario does not require any class to be set up.
+
+There are four building blocks that help you construct `WithSpec` test scenarios:
+
+#### setup
+
+With the optional `setup` step(s) one or more actions can be defined in order to set up the
+actual test run. For instance, if your test case is to delete a table row, you might want to create it
+first.
+
+#### run
+
+This is the only mandatory step for a test scenario. Sets up the actual action to be tested.
+
+#### assertion
+
+Optionally run an assertion statement after the `run` step. This step is compatible with
+`unittest.expect`, but instead of passing a value, a value providing lambda needs to be passed
+instead, since Python always evaluates function arguments eagerly.
+
+`WithSpec` enforces the philosophy of only having a single assertion statement per test case. Therefore
+trying to define multiple `assertion` steps in the same scenario will result in an exception.
+
+#### teardown
+
+In case your test case produces any side effects, you might want to clean them up afterwards. This 
+can be done by defining one or more `teardown` steps. Since not every test needs a cleanup, this step
+is optional.
+
+A complete scenario might look something like this:
+
+```python
+from unittest_specs import scenario, setup, run, teardown, assertion, expect
+
+class Adder:
+    def __init__(self):
+        self.__result = 0
+
+    def perform_addition(self, a, b):
+        self.__result = a + b
+
+    def reset_result(self):
+        self.__result = 0
+
+    @property
+    def result(self):
+        return self.__result
+
+
+with scenario("adding 1 and 4 together results in 5") as test_scenario:
+
+    adder = Adder()
+
+    test_scenario @ setup << (lambda: adder.reset_result())
+    
+    test_scenario @ run << (lambda: adder.perform_addition(1, 4))
+    
+    test_scenario @ assertion << expect(lambda: adder.result).to_be(5)
+    
+    test_scenario @ teardown << (lambda: adder.reset_result())
 ```
