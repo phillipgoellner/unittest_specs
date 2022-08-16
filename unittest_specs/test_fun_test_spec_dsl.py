@@ -78,3 +78,12 @@ class FunAsserterSpec(unittest.TestCase):
 
     def test_asserter_should_detect_list_length_correctly(self):
         self.list_asserter.to_be_of_length(3)(self)
+
+
+describe("Python numbers",
+
+         it("5 should be of type int",
+            expect(5).to_be_of_type(int)
+            )
+
+         )
