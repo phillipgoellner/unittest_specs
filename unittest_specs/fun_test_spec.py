@@ -1,14 +1,15 @@
 import unittest
 from inspect import stack, getmodule
-from typing import Callable, Tuple
+from typing import Callable, Tuple, Type, Any
 
 
 def describe(description: str, *test_config) -> None:
     """
     Constructs a collection containing zero or more test cases.
 
-    :param description:
-    :param test_config:
+    :param description: intended for documentation of this describe() block; this description is transformed into
+    the type name of the generated unittest.TestCase subclass
+    :param test_config: zero or more test case defined by it() blocks
     """
     class_name = description.title().replace(" ", "")
 
@@ -19,16 +20,26 @@ def describe(description: str, *test_config) -> None:
     module.__dict__[class_name] = test_class
 
 
-def it(description: str, test_def: Callable) -> Tuple[str, Callable]:
+def it(description: str, test_def: Callable, intercept: Type[Exception] = None) -> Tuple[str, Callable]:
     """
     Constructs a test case consisting of a description and an assertion line.
 
     :param description: intended for documentation of this test case; the description is also transformed into the
     test method name
     :param test_def: assertion line passed to describe() block for
+    :param intercept: Intercepts an expected Exception object occurring in this it() declaration. If no Exception
+    of the specified type is raised, the test fails.
     :return: a tuple composed of the test method name and the assertion line; this is only intended to be
     used by describe()
     """
+
+    if intercept and issubclass(intercept, Exception):
+        def intercept_block(_):
+            with unittest.TestCase().assertRaises(expected_exception=intercept):
+                test_def()
+
+        return f"test_{description.replace(' ', '_')}", intercept_block
+
     return f"test_{description.replace(' ', '_')}", test_def
 
 
@@ -81,13 +92,14 @@ def expect(actual_value):
             return run_test
 
         def to_contain_all(self, expected_elements) -> Callable:
-            def run_test(_):
+            def run_test(_=None):
                 is_contained = True
                 for element in expected_elements:
                     if element not in _get_actual_value():
                         is_contained = False
                         break
                 self.assertTrue(is_contained)
+
             return run_test
 
         def to_be_true(self) -> Callable:

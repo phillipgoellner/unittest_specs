@@ -20,6 +20,13 @@ class FunTestDSL(unittest.TestCase):
         module = getmodule(currentframe())
         self.assertEqual(module.__dict__["TestClass"].__name__, "TestClass")
 
+    def test_exception_interception(self):
+        def exception_raiser(_):
+            raise Exception()
+
+        _, wrapped_interception_def = it("", exception_raiser, intercept=Exception)
+        wrapped_interception_def(self)
+
 
 class FunAsserterSpec(unittest.TestCase):
     def setUp(self) -> None:
