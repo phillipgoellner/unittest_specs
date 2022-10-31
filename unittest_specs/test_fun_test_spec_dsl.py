@@ -8,7 +8,7 @@ from unittest_specs.fun_test_spec import describe, it, expect, before_each
 
 class FunTestDSL(unittest.TestCase):
     def test_it_should_return_correct_name(self):
-        actual_name, _ = it("a test name", lambda: 1)
+        actual_name, _ = it("a test name", lambda: None)
         self.assertEqual(actual_name, "test_a_test_name")
 
     def test_it_should_return_passed_function(self):
