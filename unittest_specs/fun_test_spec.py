@@ -35,6 +35,21 @@ def before_each(*setup_actions: Callable[[], Any]) -> Tuple[str, Callable[[], No
     return "setUp", setUp
 
 
+def after_each(*teardown_actions: Callable[[], Any]) -> Tuple[str, Callable[[], None]]:
+    """
+    Constructs the tearDown() function for the class resulting from the enclosing describe() block.
+
+    :param teardown_actions: zero or more tear down functions to be called after each it() block is run
+    :return: a tuple composed of the method name "setUp" and a function indirection to execute all provided
+    setup_actions; this is only intended to be
+    used by describe()
+    """
+    def tearDown(self):
+        for action in teardown_actions:
+            action()
+    return "tearDown", tearDown
+
+
 def it(description: str, test_def: Callable[[], None], intercept: Type[Exception] = None) -> Tuple[str, Callable[[Any], None]]:
     """
     Constructs a test case consisting of a description and an assertion line.

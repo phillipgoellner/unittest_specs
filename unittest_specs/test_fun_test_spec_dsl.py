@@ -3,7 +3,7 @@ import unittest
 from inspect import getmodule, currentframe
 from typing import Callable
 
-from unittest_specs.fun_test_spec import describe, it, expect, before_each
+from unittest_specs.fun_test_spec import describe, it, expect, before_each, after_each
 
 
 class FunTestDSL(unittest.TestCase):
@@ -26,11 +26,23 @@ class FunTestDSL(unittest.TestCase):
         self.assertTrue("setUp" in module.__dict__["TestClass"].__dict__)
 
     def test_run_setUp_action(self):
-
         vh = ValueHolder()
         describe("Test Class", before_each(lambda: vh.enter_value(42)))
         module = getmodule(currentframe())
         module.__dict__["TestClass"].__dict__["setUp"](0)
+
+        self.assertEqual(vh.value, 42)
+
+    def test_before_each_registers_tearDown(self):
+        describe("Test Class", after_each())
+        module = getmodule(currentframe())
+        self.assertTrue("tearDown" in module.__dict__["TestClass"].__dict__)
+
+    def test_run_tearDown_action(self):
+        vh = ValueHolder()
+        describe("Test Class", after_each(lambda: vh.enter_value(42)))
+        module = getmodule(currentframe())
+        module.__dict__["TestClass"].__dict__["tearDown"](0)
 
         self.assertEqual(vh.value, 42)
 
@@ -112,15 +124,26 @@ class ValueHolder:
     def enter_value(self, new_value):
         self.__value = new_value
 
+    def enter_unset_value_or_fail(self, new_value):
+        if self.__value is not None:
+            raise Exception("Value was already set!")
+        self.__value = new_value
+
 
 value_holder = ValueHolder()
 
-describe("Python numbers",
+describe("Python numbers after each",
 
-         before_each(lambda: value_holder.enter_value(5)),
+         before_each(lambda: value_holder.enter_unset_value_or_fail(5)),
 
          it("5 should be of type int",
             expect(lambda: value_holder.value).to_be_of_type(int)
-            )
+            ),
+
+         it("5 should be exactly 5",
+            expect(lambda: value_holder.value).to_be(5)
+            ),
+
+         after_each(lambda: value_holder.enter_value(None))
 
          )
