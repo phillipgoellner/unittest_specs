@@ -3,7 +3,7 @@ from inspect import stack, getmodule
 from typing import Callable, Tuple, Type, Any
 
 
-def describe(description: str, *test_config) -> None:
+def describe(description: str, *test_config: Tuple[str, Callable[[Any], None]]) -> None:
     """
     Constructs a collection containing zero or more test cases.
 
@@ -35,7 +35,7 @@ def before_each(*setup_actions: Callable[[], Any]) -> Tuple[str, Callable[[], No
     return "setUp", setUp
 
 
-def it(description: str, test_def: Callable, intercept: Type[Exception] = None) -> Tuple[str, Callable]:
+def it(description: str, test_def: Callable[[], None], intercept: Type[Exception] = None) -> Tuple[str, Callable[[Any], None]]:
     """
     Constructs a test case consisting of a description and an assertion line.
 
@@ -76,37 +76,37 @@ def expect(actual_value):
 
     class Asserter(unittest.TestCase):
 
-        def to_be(self, expected_value) -> Callable:
+        def to_be(self, expected_value) -> Callable[[Any], None]:
             def run_test(_):
                 self.assertEqual(expected_value, _get_actual_value())
 
             return run_test
 
-        def to_not_be(self, expected_value) -> Callable:
+        def to_not_be(self, expected_value) -> Callable[[Any], None]:
             def run_test(_):
                 self.assertNotEqual(expected_value, _get_actual_value())
 
             return run_test
 
-        def to_be_of_type(self, expected_type) -> Callable:
+        def to_be_of_type(self, expected_type) -> Callable[[Any], None]:
             def run_test(_):
                 self.assertIsInstance(_get_actual_value(), expected_type)
 
             return run_test
 
-        def to_equal_list(self, expected_list) -> Callable:
+        def to_equal_list(self, expected_list) -> Callable[[Any], None]:
             def run_test(_):
                 self.assertListEqual(expected_list, _get_actual_value())
 
             return run_test
 
-        def to_contain(self, expected_element) -> Callable:
+        def to_contain(self, expected_element) -> Callable[[Any], None]:
             def run_test(_):
                 self.assertTrue(expected_element in _get_actual_value())
 
             return run_test
 
-        def to_contain_all(self, expected_elements) -> Callable:
+        def to_contain_all(self, expected_elements) -> Callable[[Any], None]:
             def run_test(_=None):
                 is_contained = True
                 for element in expected_elements:
@@ -117,40 +117,40 @@ def expect(actual_value):
 
             return run_test
 
-        def to_be_true(self) -> Callable:
+        def to_be_true(self) -> Callable[[Any], None]:
             def run_test(_):
                 self.assertTrue(_get_actual_value())
 
             return run_test
 
-        def to_be_false(self) -> Callable:
+        def to_be_false(self) -> Callable[[Any], None]:
             def run_test(_):
                 self.assertFalse(_get_actual_value())
 
             return run_test
 
-        def to_be_none(self) -> Callable:
+        def to_be_none(self) -> Callable[[Any], None]:
             def run_test(_):
                 self.assertIsNone(_get_actual_value())
 
             return run_test
 
-        def to_not_be_none(self) -> Callable:
+        def to_not_be_none(self) -> Callable[[Any], None]:
             def run_test(_):
                 self.assertIsNotNone(_get_actual_value())
 
             return run_test
 
-        def to_be_a_list(self) -> Callable:
+        def to_be_a_list(self) -> Callable[[Any], None]:
             return self.to_be_of_type(list)
 
-        def to_be_a_dict(self) -> Callable:
+        def to_be_a_dict(self) -> Callable[[Any], None]:
             return self.to_be_of_type(dict)
 
-        def to_be_a_set(self) -> Callable:
+        def to_be_a_set(self) -> Callable[[Any], None]:
             return self.to_be_of_type(set)
 
-        def to_be_of_length(self, expected_length: int) -> Callable:
+        def to_be_of_length(self, expected_length: int) -> Callable[[Any], None]:
             def run_test(_):
                 self.assertEqual(expected_length, len(_get_actual_value()))
 
