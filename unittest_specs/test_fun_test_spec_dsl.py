@@ -3,7 +3,7 @@ import unittest
 from inspect import getmodule, currentframe
 from typing import Callable
 
-from unittest_specs.fun_test_spec import describe, it, expect
+from unittest_specs.fun_test_spec import describe, it, expect, before_each
 
 
 class FunTestDSL(unittest.TestCase):
@@ -19,6 +19,20 @@ class FunTestDSL(unittest.TestCase):
         describe("Test Class")
         module = getmodule(currentframe())
         self.assertEqual(module.__dict__["TestClass"].__name__, "TestClass")
+
+    def test_before_each_registers_setUp(self):
+        describe("Test Class", before_each())
+        module = getmodule(currentframe())
+        self.assertTrue("setUp" in module.__dict__["TestClass"].__dict__)
+
+    def test_run_setUp_action(self):
+
+        vh = ValueHolder()
+        describe("Test Class", before_each(lambda: vh.enter_value(42)))
+        module = getmodule(currentframe())
+        module.__dict__["TestClass"].__dict__["setUp"](0)
+
+        self.assertEqual(vh.value, 42)
 
     def test_exception_interception(self):
         def exception_raiser(_):
@@ -87,10 +101,26 @@ class FunAsserterSpec(unittest.TestCase):
         self.list_asserter.to_be_of_length(3)(self)
 
 
+class ValueHolder:
+    def __init__(self):
+        self.__value = None
+
+    @property
+    def value(self):
+        return self.__value
+
+    def enter_value(self, new_value):
+        self.__value = new_value
+
+
+value_holder = ValueHolder()
+
 describe("Python numbers",
 
+         before_each(lambda: value_holder.enter_value(5)),
+
          it("5 should be of type int",
-            expect(5).to_be_of_type(int)
+            expect(lambda: value_holder.value).to_be_of_type(int)
             )
 
          )

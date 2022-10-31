@@ -20,6 +20,21 @@ def describe(description: str, *test_config) -> None:
     module.__dict__[class_name] = test_class
 
 
+def before_each(*setup_actions: Callable[[], Any]) -> Tuple[str, Callable[[], None]]:
+    """
+    Constructs the setUp() function for the class resulting from the enclosing describe() block.
+
+    :param setup_actions: zero or more setup functions to be called before each it() block is run
+    :return: a tuple composed of the method name "setUp" and a function indirection to execute all provided
+    setup_actions; this is only intended to be
+    used by describe()
+    """
+    def setUp(self):
+        for action in setup_actions:
+            action()
+    return "setUp", setUp
+
+
 def it(description: str, test_def: Callable, intercept: Type[Exception] = None) -> Tuple[str, Callable]:
     """
     Constructs a test case consisting of a description and an assertion line.
