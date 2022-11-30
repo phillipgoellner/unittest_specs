@@ -1,6 +1,10 @@
 import unittest
 from inspect import stack, getmodule
-from typing import Callable, Tuple, Type, Any
+from typing import Callable, Tuple, Type, Any, Union
+
+
+Procedure = Callable[[], None]
+ExpectedException = Union[Type[Exception], None]
 
 
 def describe(description: str, *test_config: Tuple[str, Callable[[Any], None]]) -> None:
@@ -20,7 +24,7 @@ def describe(description: str, *test_config: Tuple[str, Callable[[Any], None]]) 
     module.__dict__[class_name] = test_class
 
 
-def before_each(*setup_actions: Callable[[], Any]) -> Tuple[str, Callable[[], None]]:
+def before_each(*setup_actions: Procedure) -> Tuple[str, Procedure]:
     """
     Constructs the setUp() function for the class resulting from the enclosing describe() block.
 
@@ -35,7 +39,7 @@ def before_each(*setup_actions: Callable[[], Any]) -> Tuple[str, Callable[[], No
     return "setUp", setUp
 
 
-def after_each(*teardown_actions: Callable[[], Any]) -> Tuple[str, Callable[[], None]]:
+def after_each(*teardown_actions: Procedure) -> Tuple[str, Procedure]:
     """
     Constructs the tearDown() function for the class resulting from the enclosing describe() block.
 
@@ -50,7 +54,7 @@ def after_each(*teardown_actions: Callable[[], Any]) -> Tuple[str, Callable[[], 
     return "tearDown", tearDown
 
 
-def it(description: str, test_def: Callable[[], None], intercept: Type[Exception] = None) -> Tuple[str, Callable[[Any], None]]:
+def it(description: str, test_def: Procedure, intercept: ExpectedException = None) -> Tuple[str, Callable[[Any], None]]:
     """
     Constructs a test case consisting of a description and an assertion line.
 
